@@ -1,0 +1,39 @@
+.logo img {
+	width: 150px;
+}
+.justify-content-center {
+	display: flex;
+	justify-content: center;
+}
+
+#login {
+	background-image: url('../img/background.jpg');
+}
+#login::before {
+	content: '';
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	background: rgba(255, 255, 255, 0.6);
+	z-index: -1;
+}
+#login.main-panel {
+	width: 100%;
+	display: -webkit-flex;
+	display: -moz-flex;
+	display: -ms-flex;
+	display: -o-flex;
+	display: flex;
+	flex-direction: column;
+    align-items: stretch;
+    justify-content: space-between;
+}
+#login .card {
+	margin-top: 3rem;
+	padding: 2rem;
+}
+.content {
+	min-height: auto;
+}
