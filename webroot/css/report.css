@@ -37,3 +37,16 @@
 .content {
 	min-height: auto;
 }
+.form-horizontal .btn {
+	margin-top: 6px;
+	margin-bottom: 6px;
+}
+.table-hover > tbody > tr:hover {
+	background: #1dc7ea;
+	transition: 0.3s linear;
+}
+
+.table-hover > tbody > tr:hover a {
+	color: white;
+	text-decoration: underline;
+}

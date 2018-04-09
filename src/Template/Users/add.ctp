@@ -20,7 +20,7 @@
                         echo $this->Form->input('password');
                         echo $this->Form->input('first_name');
                         echo $this->Form->input('last_name');
-                        echo $this->Form->input('role', ['type' => 'select', 'options' => ['admin', 'reporter']]);
+                        echo $this->Form->input('role', ['type' => 'select', 'options' => $roles]);
                     ?>
                 </fieldset>
                 <?= $this->Form->button(__('Submit'), ['class' => 'btn btn-info btn-fill pull-right']) ?>

@@ -1,7 +1,1 @@
-<?php
-$class = 'message';
-if (!empty($params['class'])) {
-    $class .= ' ' . $params['class'];
-}
-?>
-<div class="<?= h($class) ?>"><?= h($message) ?></div>
+<div class="alert alert-info" onclick="this.classList.add('hidden');"><span><?= h($message) ?></span></div>

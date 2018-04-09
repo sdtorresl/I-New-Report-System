@@ -28,7 +28,7 @@
                             <td><?= h($user->email) ?></td>
                             <td><?= h($user->first_name) ?></td>
                             <td><?= h($user->last_name) ?></td>
-                            <td><?= h($user->role) ?></td>
+                            <td><?= $roles[$user->role] ?></td>
                             <td><?= h($user->created) ?></td>
                             <td class="actions">
                                 <?= $this->Html->link(__('View'), ['action' => 'view', $user->id]) ?>
