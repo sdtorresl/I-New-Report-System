@@ -73,7 +73,7 @@ $roles = [
 <body>
 
 <div class="wrapper">
-    <div class="sidebar" data-color="azure" data-image="http://op01/reports/img/sidebar-6.jpg">
+    <div class="sidebar" data-color="azure" data-image="<?= $this->Url->build('/') ?>img/sidebar-6.jpg">
 
         <!-- 
             Tip 1: you can change the color of the sidebar using: data-color="blue | azure | green | orange | red | purple"

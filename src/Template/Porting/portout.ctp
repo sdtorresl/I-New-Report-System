@@ -36,6 +36,8 @@
 								<button type="submit" class="btn btn-info btn-fill pull-right"><?= __('Query') ?></button>
 							</div>
 						</div>
+
+						<?= $this->Flash->render() ?>
 					</div>
 				</form>
 			</div>

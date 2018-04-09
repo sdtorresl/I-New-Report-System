@@ -1,211 +1,245 @@
-type = ['','info','success','warning','danger'];
+var colors  = [
+	'#f44336', // Red
+	'#e91e63', // Pink
+	'#9c27b0', // Purple
+	'#673ab7', // Deep Purple
+	'#3f51b5', // Indigo
+	'#2196f3', // Blue
+	'#03a9f4', // LightBlue
+	'#00bcd4', // Cyan
+	'#009688', // Teal
+	'#4caf50', // Green
+	'#8bc34a', // Light Green
+	'#cddc39', // Lime
+	'#ffeb3b', // Yellow
+	'#ffc107', // Amber
+	'#ff9800', // Orange
+	'#ff5722', // Deep Orange
+	'#795548', // Brown
+	'#9e9e9e', // Grey
+	'#607d8b' // Blue Grey
+]
 
+var getColorArray = function(size) {
+	var notUsedColors = colors;
 
-porting = {
-    initPickColor: function(){
-        $('.pick-class-label').click(function(){
-            var new_class = $(this).attr('new-class');
-            var old_class = $('#display-buttons').attr('data-class');
-            var display_div = $('#display-buttons');
-            if(display_div.length) {
-            var display_buttons = display_div.find('.btn');
-            display_buttons.removeClass(old_class);
-            display_buttons.addClass(new_class);
-            display_div.attr('data-class', new_class);
-            }
-        });
-    },
+	var colorsArray = [];
+	var current;
+	var i = 0;
 
-    checkScrollForTransparentNavbar: debounce(function() {
-            $navbar = $('.navbar[color-on-scroll]');
-            scroll_distance = $navbar.attr('color-on-scroll') || 500;
+	while (i < size) {
+		current = Math.floor(Math.random() * notUsedColors.length);
+		colorsArray[i] = notUsedColors[current];
+		
+		// Remove used colors, if there is not available, reset
+		if (current >= 0) {
+			notUsedColors.splice(current, 1);
+		} else {
+			notUsedColors = colors;
+		}
 
-            if($(document).scrollTop() > scroll_distance ) {
-                if(transparent) {
-                    transparent = false;
-                    $('.navbar[color-on-scroll]').removeClass('navbar-transparent');
-                    $('.navbar[color-on-scroll]').addClass('navbar-default');
-                }
-            } else {
-                if( !transparent ) {
-                    transparent = true;
-                    $('.navbar[color-on-scroll]').addClass('navbar-transparent');
-                    $('.navbar[color-on-scroll]').removeClass('navbar-default');
-                }
-            }
-    }, 17),
-
-    initDocChartist: function(){
-        var dataSales = {
-          labels: ['9:00AM', '12:00AM', '3:00PM', '6:00PM', '9:00PM', '12:00PM', '3:00AM', '6:00AM'],
-          series: [
-             [287, 385, 490, 492, 554, 586, 698, 695, 752, 788, 846, 944],
-            [67, 152, 143, 240, 287, 335, 435, 437, 539, 542, 544, 647],
-            [23, 113, 67, 108, 190, 239, 307, 308, 439, 410, 410, 509]
-          ]
-        };
-
-        var optionsSales = {
-          lineSmooth: false,
-          low: 0,
-          high: 800,
-          showArea: true,
-          height: "245px",
-          axisX: {
-            showGrid: false,
-          },
-          lineSmooth: Chartist.Interpolation.simple({
-            divisor: 3
-          }),
-          showLine: false,
-          showPoint: false,
-        };
-
-        var responsiveSales = [
-          ['screen and (max-width: 640px)', {
-            axisX: {
-              labelInterpolationFnc: function (value) {
-                return value[0];
-              }
-            }
-          }]
-        ];
-
-        Chartist.Line('#chartHours', dataSales, optionsSales, responsiveSales);
-
-
-        var data = {
-          labels: ['Jan', 'Feb', 'Mar', 'Apr', 'Mai', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-          series: [
-            [542, 443, 320, 780, 553, 453, 326, 434, 568, 610, 756, 895],
-            [412, 243, 280, 580, 453, 353, 300, 364, 368, 410, 636, 695]
-          ]
-        };
-
-        var options = {
-            seriesBarDistance: 10,
-            axisX: {
-                showGrid: false
-            },
-            height: "245px"
-        };
-
-        var responsiveOptions = [
-          ['screen and (max-width: 640px)', {
-            seriesBarDistance: 5,
-            axisX: {
-              labelInterpolationFnc: function (value) {
-                return value[0];
-              }
-            }
-          }]
-        ];
-
-        Chartist.Bar('#chartActivity', data, options, responsiveOptions);
-
-        var dataPreferences = {
-            series: [
-                [25, 30, 20, 25]
-            ]
-        };
-
-        var optionsPreferences = {
-            donut: true,
-            donutWidth: 40,
-            startAngle: 0,
-            total: 100,
-            showLabel: false,
-            axisX: {
-                showGrid: false
-            }
-        };
-
-        Chartist.Pie('#chartPreferences', dataPreferences, optionsPreferences);
-
-        Chartist.Pie('#chartPreferences', {
-          labels: ['62%','32%','6%'],
-          series: [62, 32, 6]
-        });
-    },
-
-    initChartist: function(summary, summaryByDonorCarrier, summaryByRecipientCarrier){
-
-        var count = [];
-        var operation = [];
-        for (var i = 0; i < summary.length; i ++) {
-          operation[i] = summary[i].operation + ': ' + summary[i].count;
-          count[i] = summary[i].count;
-        }
-        var summaryData = {
-          labels: operation,
-          series: count
-        };
-
-        Chartist.Pie('#chartSummary', summaryData);
-
-        var count = [];
-        var donorcarrier = [];
-        for (var i = 0; i < summaryByDonorCarrier.length; i ++) {
-          donorcarrier[i] = summaryByDonorCarrier[i].donorcarrier + ': ' + summaryByDonorCarrier[i].count;
-          count[i] = summaryByDonorCarrier[i].count;
-        }
-        var summaryByDonorCarrierData = {
-          labels: donorcarrier,
-          series: count
-        };
-
-        Chartist.Pie('#chartSummaryByDonorCarrier', summaryByDonorCarrierData);
-
-        var count = [];
-        var recipientcarrier = [];
-        for (var i = 0; i < summaryByRecipientCarrier.length; i ++) {
-          recipientcarrier[i] = summaryByRecipientCarrier[i].recipientcarrier + ': ' + summaryByRecipientCarrier[i].count;
-          count[i] = summaryByRecipientCarrier[i].count;
-        }
-        var summaryByRecipientCarrierData = {
-          labels: recipientcarrier,
-          series: count
-        };
-
-        Chartist.Pie('#chartSummaryByRecipientCarrier', summaryByRecipientCarrierData);
-    },
-
-    initGoogleMaps: function(){
-        var myLatlng = new google.maps.LatLng(40.748817, -73.985428);
-        var mapOptions = {
-          zoom: 13,
-          center: myLatlng,
-          scrollwheel: false, //we disable de scroll over the map, it is a really annoing when you scroll through page
-          styles: [{"featureType":"water","stylers":[{"saturation":43},{"lightness":-11},{"hue":"#0088ff"}]},{"featureType":"road","elementType":"geometry.fill","stylers":[{"hue":"#ff0000"},{"saturation":-100},{"lightness":99}]},{"featureType":"road","elementType":"geometry.stroke","stylers":[{"color":"#808080"},{"lightness":54}]},{"featureType":"landscape.man_made","elementType":"geometry.fill","stylers":[{"color":"#ece2d9"}]},{"featureType":"poi.park","elementType":"geometry.fill","stylers":[{"color":"#ccdca1"}]},{"featureType":"road","elementType":"labels.text.fill","stylers":[{"color":"#767676"}]},{"featureType":"road","elementType":"labels.text.stroke","stylers":[{"color":"#ffffff"}]},{"featureType":"poi","stylers":[{"visibility":"off"}]},{"featureType":"landscape.natural","elementType":"geometry.fill","stylers":[{"visibility":"on"},{"color":"#b8cb93"}]},{"featureType":"poi.park","stylers":[{"visibility":"on"}]},{"featureType":"poi.sports_complex","stylers":[{"visibility":"on"}]},{"featureType":"poi.medical","stylers":[{"visibility":"on"}]},{"featureType":"poi.business","stylers":[{"visibility":"simplified"}]}]
-
-        }
-        var map = new google.maps.Map(document.getElementById("map"), mapOptions);
-
-        var marker = new google.maps.Marker({
-            position: myLatlng,
-            title:"Hello World!"
-        });
-
-        // To add the marker to the map, call setMap();
-        marker.setMap(map);
-    },
-
-	showNotification: function(from, align){
-    	color = Math.floor((Math.random() * 4) + 1);
-
-    	$.notify({
-        	icon: "pe-7s-gift",
-        	message: "Welcome to <b>Light Bootstrap Dashboard</b> - a beautiful freebie for every web developer."
-
-        },{
-            type: type[color],
-            timer: 4000,
-            placement: {
-                from: from,
-                align: align
-            }
-        });
+		i++;
 	}
 
+	return colorsArray;
+}
 
+var getBgArray = function(colors) {
+	var background = [];
+
+	for (var i = colors.length - 1; i >= 0; i--) {
+		background[i] = convertHex(colors[i], 70);
+	}
+
+	return background;
+}
+
+var convertHex = function(hex, opacity) {
+    hex = hex.replace('#','');
+    r = parseInt(hex.substring(0,2), 16);
+    g = parseInt(hex.substring(2,4), 16);
+    b = parseInt(hex.substring(4,6), 16);
+
+    result = 'rgba('+r+','+g+','+b+','+opacity/100+')';
+    return result;
+}
+
+porting = {
+
+	loadSummaryChart: function(data) {
+		var ctx = $("#chartSummary");
+
+		bgColors = getColorArray(data.length);
+
+		var count = [];
+		var operation = [];
+		for (var i = 0; i < data.length; i ++) {
+		  operation[i] = data[i].operation;
+		  count[i] = data[i].count;
+		}
+		var summaryData = {
+		  labels: operation,
+		  series: count
+		};
+		console.log(summaryData);
+
+		var summarChart = new Chart(ctx, {
+			type: 'pie',
+			data: {
+				labels: summaryData.labels,
+				datasets: [{
+					data: summaryData.series,
+					backgroundColor: getBgArray(bgColors),
+					borderColor: bgColors,
+					borderWidth: 1
+				}]
+			}
+		});
+	},
+
+	loadPortOutChart: function(summaryByDonorCarrier) {
+		var ctx = $("#chartSummaryByDonorCarrier");
+
+		bgColors = getColorArray(summaryByDonorCarrier.length);
+
+		var count = [];
+		var donorcarrier = [];
+		for (var i = 0; i < summaryByDonorCarrier.length; i ++) {
+			donorcarrier[i] = summaryByDonorCarrier[i].donorcarrier;
+			count[i] = summaryByDonorCarrier[i].count;
+		}
+		var summaryByDonorCarrierData = {
+			labels: donorcarrier,
+			series: count
+		};
+		console.log(summaryByDonorCarrier);
+
+		var summaryByDonorChart = new Chart(ctx, {
+			type: 'pie',
+			data: {
+				labels: donorcarrier,
+				datasets: [{
+					data: count,
+					backgroundColor: getBgArray(bgColors),
+					borderColor: bgColors,
+					borderWidth: 1
+				}]
+			}
+		});
+	},
+
+	loadPortInChart: function(summaryByRecipientCarrier) {
+		var ctx = $("#chartSummaryByRecipientCarrier");
+
+		bgColors = getColorArray(summaryByRecipientCarrier.length);
+
+		var count = [];
+		var recipientcarrier = [];
+		for (var i = 0; i < summaryByRecipientCarrier.length; i ++) {
+		  recipientcarrier[i] = summaryByRecipientCarrier[i].recipientcarrier;
+		  count[i] = summaryByRecipientCarrier[i].count;
+		}
+		var summaryByRecipientCarrierData = {
+		  labels: recipientcarrier,
+		  series: count
+		};
+		console.log(summaryByRecipientCarrier);
+
+		var summaryByRecipientChart = new Chart(ctx, {
+			type: 'pie',
+			data: {
+				labels: recipientcarrier,
+				datasets: [{
+					data: count,
+					backgroundColor: getBgArray(bgColors),
+					borderColor: bgColors,
+					borderWidth: 1
+				}]
+			}
+		});
+	},
+
+	loadPortIngsByDateChart: function(tickets) {
+		var ctx = $("#chartPortings");
+
+		bgColors = getColorArray(tickets.length);
+
+		var dates = [];
+		var portouts = [];
+		var portins = [];
+		for (var i = 0; i < tickets.length; i ++) {
+			dates[i] = tickets[i].date;
+			portouts[i] = tickets[i].portout;
+			portins[i] = tickets[i].portin;
+		}
+
+		var summaryByRecipientChart = new Chart(ctx, {
+			type: 'bar',
+			data: {
+				labels: dates,
+				datasets: [
+					{
+						data: portins,
+						label: 'Port In',
+						backgroundColor: convertHex('#8bc34a', 80),
+						borderColor: '#8bc34a',
+						borderWidth: 1,
+						fill: false,
+						lineTension: false
+					}, 
+					{
+						data: portouts,
+						label: 'Port Out',
+						backgroundColor: convertHex('#f44336', 80),
+						borderColor: '#f44336',
+						borderWidth: 1,
+						fill: false,
+						lineTension: false
+					}
+				]
+			}
+		});
+	},
+
+	initChartist: function(summary, summaryByDonorCarrier, summaryByRecipientCarrier) {
+
+		var count = [];
+		var operation = [];
+		for (var i = 0; i < summary.length; i ++) {
+		  operation[i] = summary[i].operation + ': ' + summary[i].count;
+		  count[i] = summary[i].count;
+		}
+		var summaryData = {
+		  labels: operation,
+		  series: count
+		};
+
+		Chartist.Pie('#chartSummary', summaryData);
+
+		var count = [];
+		var donorcarrier = [];
+		for (var i = 0; i < summaryByDonorCarrier.length; i ++) {
+		  donorcarrier[i] = summaryByDonorCarrier[i].donorcarrier + ': ' + summaryByDonorCarrier[i].count;
+		  count[i] = summaryByDonorCarrier[i].count;
+		}
+		var summaryByDonorCarrierData = {
+		  labels: donorcarrier,
+		  series: count
+		};
+
+		Chartist.Pie('#chartSummaryByDonorCarrier', summaryByDonorCarrierData);
+
+		var count = [];
+		var recipientcarrier = [];
+		for (var i = 0; i < summaryByRecipientCarrier.length; i ++) {
+		  recipientcarrier[i] = summaryByRecipientCarrier[i].recipientcarrier + ': ' + summaryByRecipientCarrier[i].count;
+		  count[i] = summaryByRecipientCarrier[i].count;
+		}
+		var summaryByRecipientCarrierData = {
+		  labels: recipientcarrier,
+		  series: count
+		};
+
+		Chartist.Pie('#chartSummaryByRecipientCarrier', summaryByRecipientCarrierData);
+	}
 }
