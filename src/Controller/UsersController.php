@@ -10,11 +10,18 @@ use App\Controller\AppController;
  */
 class UsersController extends AppController
 {
-
     public function initialize()
     {
         parent::initialize();
+     
+        $roles = [
+            'admin' => 'Administrator',
+            'reporter' => 'Reporter',
+            'drummer' => 'Drummer'
+        ];
+
         $this->Auth->allow(['logout']);
+        $this->set('roles', $roles);
     }
 
     /**

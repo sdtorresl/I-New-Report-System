@@ -13,7 +13,12 @@
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 
-$description = 'I New Report System';
+$description = 'I New Operations System';
+$roles = [
+    'admin' => 'Administrator',
+    'reporter' => 'Reporter',
+    'drummer' => 'Drummer'
+];
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -80,11 +85,12 @@ $description = 'I New Report System';
                 <a href="https://www.virginmobile.co" target="__blank" class="simple-text">
                     <?= $this->Html->image('logo-virgin.png') ?>
                     <div class="clearfix"></div>
-                    I New Report System
+                    <?= __('I New Operations System') ?>
                 </a>
             </div>
 
             <ul class="nav">
+                <?php if($loggedUser['role'] == 'reporter' || $loggedUser['role'] == 'admin'): ?>
                 <li id="menuSummary">
                     <a href="<?php echo $this->Url->build(["controller" => "Porting", "action" => "index"]);?>">
                         <i class="pe-7s-graph2"></i>
@@ -103,12 +109,23 @@ $description = 'I New Report System';
                         <p><?= __('Port Out') ?></p>
                     </a>
                 </li>
+                <?php endif; ?>
+                <?php if($loggedUser['role'] == 'drummer' || $loggedUser['role'] == 'admin'): ?>
+                <li id="menuAgents">
+                    <a href="<?php echo $this->Url->build(["controller" => "Agents", "action" => "index"]);?>">
+                        <i class="pe-7s-id"></i>
+                        <p><?= __('Agents') ?></p>
+                    </a>
+                </li>
+                <?php endif; ?>
+                <?php if($loggedUser['role'] == 'admin'): ?>
                 <li id="menuUsers">
                     <a href="<?php echo $this->Url->build(["controller" => "Users", "action" => "index"]);?>">
                         <i class="pe-7s-user"></i>
                         <p><?= __('Users') ?></p>
                     </a>
                 </li>
+                <?php endif; ?>
             </ul>
         </div>
     </div>
@@ -123,7 +140,7 @@ $description = 'I New Report System';
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                     </button>
-                    <a class="navbar-brand" href="#"><?= $this->fetch('title') ?></a>
+                    <a class="navbar-brand" href=""><?= $loggedUser['first_name'] . ' ' . $loggedUser['last_name'] . ' (' . $roles[$loggedUser['role']] . ')' ?></a>
                 </div>
                 <div class="collapse navbar-collapse">                    
                     <ul class="nav navbar-nav navbar-right">
@@ -140,6 +157,8 @@ $description = 'I New Report System';
 
         <div class="content">
             <div class="container-fluid">
+                <?= $this->Flash->render() ?>
+                
                 <?= $this->fetch('content') ?>
             </div>
         </div>

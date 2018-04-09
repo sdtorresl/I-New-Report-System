@@ -18,10 +18,14 @@
 				<?= $this->Form->create() ?>
 				<?= $this->Form->input('email') ?>
 				<?= $this->Form->input('password') ?>
+
+				<?= $this->Flash->render() ?>
+				
 				<?= $this->Form->button(__('Login'), ['class' => 'btn btn-info btn-fill pull-right']) ?>
 				<?= $this->Form->end() ?>
 				<div class="clearfix"></div>
 			</div>
+
 		</div>
 	</div>
 </div>

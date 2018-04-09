@@ -204,3 +204,18 @@ Type::build('datetime')->useLocaleParser();
 
 // Form Templates
 Configure::load('templatesConfig','default');
+Plugin::load('CakePdf', ['bootstrap' => true]);
+
+Configure::write('CakePdf', [
+    'engine' => 'CakePdf.DomPdf',
+    'margin' => [
+        'bottom' => 15,
+        'left' => 50,
+        'right' => 30,
+        'top' => 45
+    ],
+    'title' => 'Generated Report',
+    'download' => true
+]);
+
+Plugin::load('DebugKit');
