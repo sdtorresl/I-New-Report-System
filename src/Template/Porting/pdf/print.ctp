@@ -17,7 +17,7 @@
 			</tr>
 		</thead>
 		
-		<?php foreach ($data as $row): ?>
+		<?php foreach ($printable as $row): ?>
 		<tr>
 			<?php foreach ($row as $value): ?>
 			<td><?= $value ?></td>

@@ -207,12 +207,12 @@ Configure::load('templatesConfig','default');
 Plugin::load('CakePdf', ['bootstrap' => true]);
 
 Configure::write('CakePdf', [
-    'engine' => 'CakePdf.DomPdf',
+    'engine' => 'CakePdf.WkHtmlToPdf',
     'margin' => [
         'bottom' => 15,
-        'left' => 50,
-        'right' => 30,
-        'top' => 45
+        'left' => 20,
+        'right' => 10,
+        'top' => 35
     ],
     'title' => 'Generated Report',
     'download' => true

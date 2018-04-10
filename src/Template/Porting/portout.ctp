@@ -6,7 +6,19 @@
 	<div class="col-md-12">
 		<div class="card">
 			<div class="header">
-				<h4 class="title"><?= __('Port Out Report') ?></h4>
+				<div class="title-container">
+					<h4 class="title"><?= __('Port Out Report') ?></h4>
+					<?php if (isset($startDate) && isset($endDate)): ?>
+					<?= $this->Html->link(
+						'<i class="pe-7s-download"></i>',
+						[
+							'controller' => 'porting', 
+							'action' => 'portout', 
+							'?' => ['startDate' => $startDate, 'endDate' => $endDate, 'pdf' => 1]
+						],
+						['escape' => false, 'title' => __('Generate PDF')]) ?>
+					<?php endif; ?>
+				</div>
 				<p class="category"><?= __('Query port outs between selected dates') ?></p>
 			</div>
 			

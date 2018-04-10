@@ -50,3 +50,18 @@
 	color: white;
 	text-decoration: underline;
 }
+.title-container {
+	display: -webkit-flex;
+	display: -moz-flex;
+	display: -ms-flex;
+	display: -o-flex;
+	display: flex;
+	justify-content: space-between;
+}
+.title-container a i {
+	font-size: 2em;
+	color: black;
+}
+.title-container a:hover i {
+	color: #1dc7ea;
+}

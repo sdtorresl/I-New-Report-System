@@ -10,6 +10,7 @@ class PortingController extends AppController
     {
         parent::initialize();
         $this->allowedDays = 62;
+        $this->allowedDaysPDF = 5;
     }
 
     public function index()
@@ -152,10 +153,48 @@ class PortingController extends AppController
                     'resultcode IN' => ['OK','FAILED','CANCELED']
                 ]);
             
-            $this->loadComponent('Paginator');
-            $tickets = $this->Paginator->paginate($query);
+            $pdf = $this->request->getQuery('pdf') ? true : false;
+            $csv = $this->request->getQuery('csv') ? true : false;
+            if ($pdf || $csv) {
 
-            $this->set('tickets', $tickets);
+                // Check allowed dates
+                $diff = date_diff(date_create($endDate), date_create($startDate));
+                if ($diff->days > $this->allowedDaysPDF) {
+                    $this->Flash->error('The maximum allowed range for PDF is ' . $this->allowedDaysPDF . ' days, you have selected ' . $diff->days);
+                    return;
+                }
+                
+                // Generate PDF
+                if ($pdf) {
+                    $options = [
+                        'title' => 'Reporte de Port Out',
+                        'filename' => 'portouts.pdf',
+                        'description' => 'Portabilidades desde ' . $startDate . ' hasta ' . $endDate,
+                        'headers' => ['MSISDN', 'Nuevo MSISDN', 'Fecha', 'Operaror', 'Resultado']
+                    ];
+
+                    $this->viewBuilder()->options([
+                        'pdfConfig' => [
+                            'orientation' => 'portrait',
+                            'filename' => $options['filename'],
+                            'title' => $options['title']
+                        ]
+                    ]);
+
+                    $this->set('options', $options);
+                    $this->set('tickets', $query);
+
+                    $this->RequestHandler->renderAs($this, 'pdf', ['attachment' => 'filename.pdf']);
+                } else {
+                    // Generate CSV
+                }
+            }
+            else {
+                $this->loadComponent('Paginator');
+                $tickets = $this->Paginator->paginate($query);
+
+                $this->set('tickets', $tickets);
+            }
         }
     }
 
@@ -177,8 +216,7 @@ class PortingController extends AppController
     //  }
     // }
 
-    public function print() {
-
+    public function print($data) {
         $opt = [
             'title' => 'Hola',
             'filename' => 'archivo.pdf',
@@ -186,21 +224,17 @@ class PortingController extends AppController
             'headers' => ['title', 'name', 'value']
         ];
 
-        $data = [
-            ['ID1', 'ID2', 'ID3'],
-            [1,2,3]
-        ];
-
-        // $this->viewBuilder()->options([
-        //     'pdfConfig' => [
-        //         'orientation' => 'portrait',
-        //         'filename' => $opt['filename'],
-        //         'title' => $opt['title']
-        //     ]
-        // ]);
+        $this->viewBuilder()->options([
+            'pdfConfig' => [
+                'orientation' => 'portrait',
+                'filename' => $opt['filename'],
+                'title' => $opt['title']
+            ]
+        ]);
 
         $this->set('options', $opt);
-        $this->set('data', $data);
-    
+        $this->set('printable', $data);
+
+        $this->RequestHandler->renderAs($this, 'pdf', ['attachment' => 'filename.pdf']);
     }
 }
