@@ -97,27 +97,27 @@ porting = {
 		});
 	},
 
-	loadPortOutChart: function(summaryByDonorCarrier) {
-		var ctx = $("#chartSummaryByDonorCarrier");
+	loadPortOutChart: function(portout) {
+		var ctx = $("#chartPortout");
 
-		bgColors = getColorArray(summaryByDonorCarrier.length);
+		bgColors = getColorArray(portout.length);
 
 		var count = [];
-		var donorcarrier = [];
-		for (var i = 0; i < summaryByDonorCarrier.length; i ++) {
-			donorcarrier[i] = summaryByDonorCarrier[i].donorcarrier;
-			count[i] = summaryByDonorCarrier[i].count;
+		var recipientcarrier = [];
+		for (var i = 0; i < portout.length; i ++) {
+			recipientcarrier[i] = portout[i].recipientcarrier;
+			count[i] = portout[i].count;
 		}
-		var summaryByDonorCarrierData = {
-			labels: donorcarrier,
+		var portoutData = {
+			labels: recipientcarrier,
 			series: count
 		};
-		console.log(summaryByDonorCarrier);
+		console.log(portout);
 
 		var summaryByDonorChart = new Chart(ctx, {
 			type: 'pie',
 			data: {
-				labels: donorcarrier,
+				labels: recipientcarrier,
 				datasets: [{
 					data: count,
 					backgroundColor: getBgArray(bgColors),
@@ -128,27 +128,27 @@ porting = {
 		});
 	},
 
-	loadPortInChart: function(summaryByRecipientCarrier) {
-		var ctx = $("#chartSummaryByRecipientCarrier");
+	loadPortInChart: function(portin) {
+		var ctx = $("#chartPortin");
 
-		bgColors = getColorArray(summaryByRecipientCarrier.length);
+		bgColors = getColorArray(portin.length);
 
 		var count = [];
-		var recipientcarrier = [];
-		for (var i = 0; i < summaryByRecipientCarrier.length; i ++) {
-		  recipientcarrier[i] = summaryByRecipientCarrier[i].recipientcarrier;
-		  count[i] = summaryByRecipientCarrier[i].count;
+		var donorcarrier = [];
+		for (var i = 0; i < portin.length; i ++) {
+			donorcarrier[i] = portin[i].donorcarrier;
+			count[i] = portin[i].count;
 		}
-		var summaryByRecipientCarrierData = {
-		  labels: recipientcarrier,
-		  series: count
+		var portinData = {
+			labels: donorcarrier,
+			series: count
 		};
-		console.log(summaryByRecipientCarrier);
+		console.log(portin);
 
 		var summaryByRecipientChart = new Chart(ctx, {
 			type: 'pie',
 			data: {
-				labels: recipientcarrier,
+				labels: donorcarrier,
 				datasets: [{
 					data: count,
 					backgroundColor: getBgArray(bgColors),

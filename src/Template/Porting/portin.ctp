@@ -1,11 +1,33 @@
 <script type="text/javascript">
-    $('#menuPortIn').addClass('active');
+	$('#menuPortIn').addClass('active');
 </script>
 <div class="row">
 	<div class="col-md-12">
 		<div class="card">
 			<div class="header">
-				<h4 class="title"><?= __('Port In Report') ?></h4>
+				<div class="title-container">
+					<h4 class="title"><?= __('Port In Report') ?></h4>
+					<?php if (isset($startDate) && isset($endDate)): ?>
+					<div>
+						<?= $this->Html->link(
+							'<i class="pe-7s-print"></i>',
+							[
+								'controller' => 'porting', 
+								'action' => 'portin', 
+								'?' => ['startDate' => $startDate, 'endDate' => $endDate, 'pdf' => 1]
+							],
+							['escape' => false, 'title' => __('Generate PDF')]) ?>
+						<?= $this->Html->link(
+							'<i class="pe-7s-diskette"></i>',
+							[
+								'controller' => 'porting', 
+								'action' => 'portin', 
+								'?' => ['startDate' => $startDate, 'endDate' => $endDate, 'csv' => 1]
+							],
+							['escape' => false, 'title' => __('Generate CSV')]) ?>
+					</div>
+					<?php endif; ?>
+				</div>
 				<p class="category"><?= __('Query port ins between selected dates') ?></p>
 			</div>
 			
@@ -97,3 +119,18 @@
 		</div>
 	</div>
 </div>
+
+<?php if (isset($tickets)): ?>
+<script type="text/javascript">
+	$(document).ready(function(){
+		$.notify({
+			icon: 'pe-7s-graph',
+			message: "Your <b>Port In Report</b> is ready"
+
+		},{
+			type: 'info',
+			timer: 4000
+		});
+	});
+</script>
+<?php endif; ?>

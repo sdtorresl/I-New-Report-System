@@ -219,3 +219,4 @@ Configure::write('CakePdf', [
 ]);
 
 Plugin::load('DebugKit');
+Plugin::load('CsvView');

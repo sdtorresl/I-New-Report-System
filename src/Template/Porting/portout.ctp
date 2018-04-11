@@ -9,14 +9,24 @@
 				<div class="title-container">
 					<h4 class="title"><?= __('Port Out Report') ?></h4>
 					<?php if (isset($startDate) && isset($endDate)): ?>
-					<?= $this->Html->link(
-						'<i class="pe-7s-download"></i>',
-						[
-							'controller' => 'porting', 
-							'action' => 'portout', 
-							'?' => ['startDate' => $startDate, 'endDate' => $endDate, 'pdf' => 1]
-						],
-						['escape' => false, 'title' => __('Generate PDF')]) ?>
+					<div>
+						<?= $this->Html->link(
+							'<i class="pe-7s-print"></i>',
+							[
+								'controller' => 'porting', 
+								'action' => 'portout', 
+								'?' => ['startDate' => $startDate, 'endDate' => $endDate, 'pdf' => 1]
+							],
+							['escape' => false, 'title' => __('Generate PDF')]) ?>
+						<?= $this->Html->link(
+							'<i class="pe-7s-diskette"></i>',
+							[
+								'controller' => 'porting', 
+								'action' => 'portout', 
+								'?' => ['startDate' => $startDate, 'endDate' => $endDate, 'csv' => 1]
+							],
+							['escape' => false, 'title' => __('Generate CSV')]) ?>
+					</div>
 					<?php endif; ?>
 				</div>
 				<p class="category"><?= __('Query port outs between selected dates') ?></p>
@@ -110,3 +120,18 @@
 		</div>
 	</div>
 </div>
+
+<?php if (isset($tickets)): ?>
+<script type="text/javascript">
+    $(document).ready(function(){
+        $.notify({
+            icon: 'pe-7s-graph',
+            message: "Your <b>Port Out Report</b> is ready"
+
+        },{
+            type: 'info',
+            timer: 4000
+        });
+    });
+</script>
+<?php endif; ?>

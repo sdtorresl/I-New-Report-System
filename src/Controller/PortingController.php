@@ -10,7 +10,7 @@ class PortingController extends AppController
     {
         parent::initialize();
         $this->allowedDays = 62;
-        $this->allowedDaysPDF = 5;
+        $this->allowedDaysPDF = 31;
     }
 
     public function index()
@@ -87,10 +87,50 @@ class PortingController extends AppController
                 ])
                 ->group('donorcarrier');
 
-            $this->set('tickets', $tickets);
-            $this->set('summary', $summary);
-            $this->set('summaryByDonorCarrier', $summaryByDonorCarrier);
-            $this->set('summaryByRecipientCarrier', $summaryByRecipientCarrier);
+            $pdf = $this->request->getQuery('pdf') ? true : false;
+            $csv = $this->request->getQuery('csv') ? true : false;
+            if ($pdf || $csv) {                
+                // Generate PDF
+                if ($pdf) {
+                    $options = [
+                        'title' => 'Resumen de portabilidades',
+                        'filename' => 'portings-summary.pdf',
+                        'description' => 'Portabilidades desde ' . $startDate . ' hasta ' . $endDate,
+                        'headers' => ['Operación', 'Cantidad']
+                    ];
+
+                    $this->viewBuilder()->options([
+                        'pdfConfig' => [
+                            'orientation' => 'portrait',
+                            'filename' => $options['filename'],
+                            'title' => $options['title']
+                        ]
+                    ]);
+
+                    $this->set('options', $options);
+                    $this->set('summary', $summary);
+
+                    $this->RequestHandler->renderAs($this, 'pdf', ['attachment' => 'filename.pdf']);
+                } else {
+                    // Generate CSV
+                    $data = [];
+                    foreach ($summary as $key => $value) {
+                        array_push($data, [$value->operation, $value->count]);
+                    }
+
+                    $_serialize = 'data';
+                    $_header = ['Operación', 'Cantidad'];
+
+                    $this->viewBuilder()->className('CsvView.Csv');
+                    $this->set(compact('data', '_serialize', '_header'));
+                }
+            }
+            else {
+                $this->set('tickets', $tickets);
+                $this->set('summary', $summary);
+                $this->set('summaryByDonorCarrier', $summaryByDonorCarrier);
+                $this->set('summaryByRecipientCarrier', $summaryByRecipientCarrier);
+            }
         }
     }
 
@@ -113,17 +153,74 @@ class PortingController extends AppController
             }
 
             $query = $this->Porting->find()
+                ->select([
+                    'oldmsisdn',
+                    'newmsisdn',
+                    'tickettimestamp',
+                    'recipientcarrier',
+                    'operation',
+                    'donorcarrier',
+                    'resultcode'
+                ])
                 ->where([
                     'operation =' => 'PortIn',
                     'tickettimestamp >=' => $startDate . ' 00:00:00',
                     'tickettimestamp <=' => $endDate . ' 23:59:59',
                     'resultcode IN' => ['OK','FAILED','CANCELED']
                 ]);
-            
-            $this->loadComponent('Paginator');
-            $tickets = $this->Paginator->paginate($query);
 
-            $this->set('tickets', $tickets);
+            $pdf = $this->request->getQuery('pdf') ? true : false;
+            $csv = $this->request->getQuery('csv') ? true : false;
+            if ($pdf || $csv) {
+
+                // Check allowed dates
+                $diff = date_diff(date_create($endDate), date_create($startDate));
+                if ($diff->days > $this->allowedDaysPDF) {
+                    $this->Flash->error('The maximum allowed range for PDF is ' . $this->allowedDaysPDF . ' days, you have selected ' . $diff->days);
+                    return;
+                }
+                
+                // Generate PDF
+                if ($pdf) {
+                    $options = [
+                        'title' => 'Reporte de Port In',
+                        'filename' => 'portins.pdf',
+                        'description' => 'Portabilidades desde ' . $startDate . ' hasta ' . $endDate,
+                        'headers' => ['MSISDN', 'Nuevo MSISDN', 'Fecha', 'Operador', 'Resultado']
+                    ];
+
+                    $this->viewBuilder()->options([
+                        'pdfConfig' => [
+                            'orientation' => 'portrait',
+                            'filename' => $options['filename'],
+                            'title' => $options['title']
+                        ]
+                    ]);
+
+                    $this->set('options', $options);
+                    $this->set('tickets', $query);
+
+                    $this->RequestHandler->renderAs($this, 'pdf', ['attachment' => 'filename.pdf']);
+                } else {
+                    // Generate CSV
+                    $data = [];
+                    foreach ($query as $key => $value) {
+                        array_push($data, [$value->oldmsisdn, $value->newmsisdn, $value->tickettimestamp, $value->donorcarrier, $value->resultcode]);
+                    }
+
+                    $_serialize = 'data';
+                    $_header = ['MSISDN', 'Nuevo MSISDN', 'Fecha', 'Operador', 'Resultado'];
+
+                    $this->viewBuilder()->className('CsvView.Csv');
+                    $this->set(compact('data', '_serialize', '_header'));
+                }
+            }
+            else {
+                $this->loadComponent('Paginator');
+                $tickets = $this->Paginator->paginate($query);
+
+                $this->set('tickets', $tickets);
+            }
         }
     }
 
@@ -146,6 +243,15 @@ class PortingController extends AppController
             }
 
             $query = $this->Porting->find()
+                ->select([
+                    'oldmsisdn',
+                    'newmsisdn',
+                    'tickettimestamp',
+                    'recipientcarrier',
+                    'operation',
+                    'donorcarrier',
+                    'resultcode'
+                ])
                 ->where([
                     'operation =' => 'PortOut',
                     'tickettimestamp >=' => $startDate . ' 00:00:00',
@@ -170,7 +276,7 @@ class PortingController extends AppController
                         'title' => 'Reporte de Port Out',
                         'filename' => 'portouts.pdf',
                         'description' => 'Portabilidades desde ' . $startDate . ' hasta ' . $endDate,
-                        'headers' => ['MSISDN', 'Nuevo MSISDN', 'Fecha', 'Operaror', 'Resultado']
+                        'headers' => ['MSISDN', 'Nuevo MSISDN', 'Fecha', 'Operador', 'Resultado']
                     ];
 
                     $this->viewBuilder()->options([
@@ -187,6 +293,16 @@ class PortingController extends AppController
                     $this->RequestHandler->renderAs($this, 'pdf', ['attachment' => 'filename.pdf']);
                 } else {
                     // Generate CSV
+                    $data = [];
+                    foreach ($query as $key => $value) {
+                        array_push($data, [$value->oldmsisdn, $value->newmsisdn, $value->tickettimestamp, $value->recipientcarrier, $value->resultcode]);
+                    }
+
+                    $_serialize = 'data';
+                    $_header = ['MSISDN', 'Nuevo MSISDN', 'Fecha', 'Operador', 'Resultado'];
+
+                    $this->viewBuilder()->className('CsvView.Csv');
+                    $this->set(compact('data', '_serialize', '_header'));
                 }
             }
             else {
@@ -196,45 +312,5 @@ class PortingController extends AppController
                 $this->set('tickets', $tickets);
             }
         }
-    }
-
-    // public function print() {
-    //  if (isset($_POST['data']) && isset($_POST['options'])) {
-          //   $data = $_POST['data'];
-          //   $options = $_POST['options'];
-            
-          //   $this->viewBuilder()->options([
-       //          'pdfConfig' => [
-       //              'orientation' => 'portrait',
-       //              'filename' => $options->filename,
-       //              'title' => $options->title
-       //          ]
-       //      ]);
-
-       //      $this->set('options', $options);
-       //      $this->set('data', $data);
-    //  }
-    // }
-
-    public function print($data) {
-        $opt = [
-            'title' => 'Hola',
-            'filename' => 'archivo.pdf',
-            'description' => 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eum assumenda, deleniti voluptates quam quis. Dolore nam aperiam ipsum quibusdam impedit recusandae laudantium soluta omnis ullam maxime delectus, laborum nemo eius!',
-            'headers' => ['title', 'name', 'value']
-        ];
-
-        $this->viewBuilder()->options([
-            'pdfConfig' => [
-                'orientation' => 'portrait',
-                'filename' => $opt['filename'],
-                'title' => $opt['title']
-            ]
-        ]);
-
-        $this->set('options', $opt);
-        $this->set('printable', $data);
-
-        $this->RequestHandler->renderAs($this, 'pdf', ['attachment' => 'filename.pdf']);
     }
 }

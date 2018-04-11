@@ -8,7 +8,29 @@
 	<div class="col-md-12">
 		<div class="card">
 			<div class="header">
-				<h4 class="title"><?= __('Porting Summary Report') ?></h4>
+                <div class="title-container">
+				    <h4 class="title"><?= __('Porting Summary Report') ?></h4>
+                    <?php if (isset($startDate) && isset($endDate)): ?>
+                    <div>
+                        <?= $this->Html->link(
+                            '<i class="pe-7s-print"></i>',
+                            [
+                                'controller' => 'porting', 
+                                'action' => 'index', 
+                                '?' => ['startDate' => $startDate, 'endDate' => $endDate, 'pdf' => 1]
+                            ],
+                            ['escape' => false, 'title' => __('Generate PDF')]) ?>
+                        <?= $this->Html->link(
+                            '<i class="pe-7s-diskette"></i>',
+                            [
+                                'controller' => 'porting', 
+                                'action' => 'index', 
+                                '?' => ['startDate' => $startDate, 'endDate' => $endDate, 'csv' => 1]
+                            ],
+                            ['escape' => false, 'title' => __('Generate CSV')]) ?>
+                    </div>
+                    <?php endif; ?>
+                </div>
 				<p class="category"><?= __('Query summary of portings between selected dates') ?></p>
 			</div>
 			
@@ -76,7 +98,7 @@
                 <p class="category"><?= __('Summary of port in') ?></p>
             </div>
             <div class="content">
-                <canvas id="chartSummaryByRecipientCarrier" width="300" height="300"></canvas>
+                <canvas id="chartPortin" width="300" height="300"></canvas>
                 <div class="footer">
                     <hr>
                     <div class="stats">
@@ -94,7 +116,7 @@
                 <p class="category"><?= __('Summary of port out') ?></p>
             </div>
             <div class="content">
-                <canvas id="chartSummaryByDonorCarrier" width="300" height="300"></canvas>
+                <canvas id="chartPortout" width="300" height="300"></canvas>
                 <div class="footer">
                     <hr>
                     <div class="stats">
@@ -109,7 +131,7 @@
         <div class="card">
             <div class="header">
                 <h4 class="title"><?= __('Portings') ?></h4>
-                <p class="category"><?= __('Summary of porttings by date') ?></p>
+                <p class="category"><?= __('Summary of portings by date') ?></p>
             </div>
             <div class="content">
                 <canvas id="chartPortings"></canvas>
@@ -134,13 +156,13 @@
     $(document).ready(function(){
 
     	var summary = <?php echo json_encode($summary); ?>;
-    	var summaryByDonorCarrier = <?php echo json_encode($summaryByDonorCarrier); ?>;
-        var summaryByRecipientCarrier = <?php echo json_encode($summaryByRecipientCarrier); ?>;
+    	var portin = <?php echo json_encode($summaryByDonorCarrier); ?>;
+        var portout = <?php echo json_encode($summaryByRecipientCarrier); ?>;
         var tickets = <?php echo json_encode($tickets); ?>;
 
         porting.loadSummaryChart(summary);
-        porting.loadPortOutChart(summaryByDonorCarrier);
-        porting.loadPortInChart(summaryByRecipientCarrier);
+        porting.loadPortOutChart(portout);
+        porting.loadPortInChart(portin);
         porting.loadPortIngsByDateChart(tickets);
 
         $.notify({

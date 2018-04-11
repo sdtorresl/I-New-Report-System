@@ -59,6 +59,10 @@ class AppController extends Controller
                 'controller' => 'Users',
                 'action' => 'login'
             ],
+            'loginRedirect' => [
+                'controller' => 'Porting',
+                'action' => 'index'
+            ],
              // If unauthorized, return them to page they were just on
             'unauthorizedRedirect' => $this->referer()
         ]);

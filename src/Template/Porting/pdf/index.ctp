@@ -16,13 +16,13 @@
 				<?php endforeach; ?>
 			</tr>
 		</thead>
-		
-		<?php foreach ($printable as $row): ?>
-		<tr>
-			<?php foreach ($row as $value): ?>
-			<td><?= $value ?></td>
-			<?php endforeach; ?>	
-		</tr>		
-		<?php endforeach; ?>
+		<tbody>
+			<?php foreach ($summary as $key => $value): ?>
+			<tr class="<?= ($key % 2) == 0 ? 'even' : 'odd' ?>">
+				<td><?= $value->operation ?></td>
+				<td><?= $value->count ?></td>
+			</tr>		
+			<?php endforeach; ?>
+		</tbody>
 	</table>
 </div>
