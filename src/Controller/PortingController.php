@@ -71,7 +71,8 @@ class PortingController extends AppController
                     'tickettimestamp <=' => $endDate . ' 23:59:59',
                     'resultcode IN' => ['OK','FAILED','CANCELED'],
                 ])
-                ->group('recipientcarrier');
+                ->group('recipientcarrier')
+                ->order('2');
 
             $summaryByDonorCarrier = $this->Porting->find();
             $summaryByDonorCarrier
@@ -85,7 +86,8 @@ class PortingController extends AppController
                     'tickettimestamp <=' => $endDate . ' 23:59:59',
                     'resultcode IN' => ['OK','FAILED','CANCELED'],
                 ])
-                ->group('donorcarrier');
+                ->group('donorcarrier')
+                ->order('2');
 
             $pdf = $this->request->getQuery('pdf') ? true : false;
             $csv = $this->request->getQuery('csv') ? true : false;
@@ -96,7 +98,12 @@ class PortingController extends AppController
                         'title' => 'Resumen de portabilidades',
                         'filename' => 'portings-summary.pdf',
                         'description' => 'Portabilidades desde ' . $startDate . ' hasta ' . $endDate,
-                        'headers' => ['Operación', 'Cantidad']
+                        'description1' => 'Portins por operador desde ' . $startDate . ' hasta ' . $endDate,
+                        'description2' => 'Portouts por operador desde ' . $startDate . ' hasta ' . $endDate,
+                        'description3' => 'Portabilidades por fecha desde ' . $startDate . ' hasta ' . $endDate,
+                        'headers' => ['Operación', 'Cantidad'],
+                        'headers1' => ['Operador', 'Cantidad'],
+                        'headers2' => ['Fecha', 'Portins', 'Portouts', 'Total']
                     ];
 
                     $this->viewBuilder()->options([
@@ -109,6 +116,9 @@ class PortingController extends AppController
 
                     $this->set('options', $options);
                     $this->set('summary', $summary);
+                    $this->set('summaryByDonorCarrier', $summaryByDonorCarrier);
+                    $this->set('summaryByRecipientCarrier', $summaryByRecipientCarrier);
+                    $this->set('tickets', $tickets);
 
                     $this->RequestHandler->renderAs($this, 'pdf', ['attachment' => 'filename.pdf']);
                 } else {

@@ -113,6 +113,14 @@ $roles = [
                         </a>
                     </li>
                     <?php endif; ?>
+                    <?php if($loggedUser['role'] == 'admin' || $loggedUser['role'] == 'admin'): ?>
+                    <li id="menuReconciliations">
+                        <a href="<?php echo $this->Url->build(["controller" => "Reconciliations", "action" => "index"]);?>">
+                            <i class="pe-7s-cash"></i>
+                            <p><?= __('Reconcilitations') ?></p>
+                        </a>
+                    </li>
+                    <?php endif; ?>
                     <?php if($loggedUser['role'] == 'admin'): ?>
                     <li id="menuUsers">
                         <a href="<?php echo $this->Url->build(["controller" => "Users", "action" => "index"]);?>">

@@ -70,6 +70,7 @@ $description = 'I New Report System';
     }
     table  {
         width: 100%;
+        margin-bottom: 40px;
     }
     td {
         padding: 5px 10px;
@@ -82,7 +83,7 @@ $description = 'I New Report System';
         text-transform: uppercase;
     }
     .even {
-        background: #ddd;
+        background: #CECEFF;
     }
     footer, .date {
         margin-top: 50px;
